@@ -30,12 +30,44 @@
   
 # b) (0.3/5) Realice un boxplot del GPA con respecto al género y con respecto al salario del recién egresado, para saber si pueden existir relaciones entre estas variables. ¿Cree que es importante incluir el género en el análisis?
   
+  # 0) Crear vector de genero
+    
+  genero <- c(rep('Hombre',86), rep('Mujer',89))
   
+  datos$genero <- factor(genero, levels=c('Hombre','Mujer'))
   
-  # GPA por genero
+  # 1) GPA por genero
   
   boxplot(GPA ~ genero, data = datos, main = "Distribucion de GPA por género", xlab="Género", ylab="GPA")
   
-  # Salario por genero
+  # 2) Salario por genero
   
   boxplot(salario ~ genero, data = datos, main = "Distribucion de salario por género", xlab="Género", ylab="Salario")
+
+# c) (0.4/5) En un modelo que incluye el género, estime el efecto de GPA y el efecto del género. 
+  
+  # 0) Realizar la regresion lineal multiple con genero, edad y GPA
+  
+  modelo_genero <- lm(salario ~ genero + Edad + GPA, data = datos)
+  
+  # 1) Resumen de modelos (coeficientes, t-test para significancia individual, R^2, F-test para significancia global)
+  
+  summary(modelo_genero)
+  
+  # 2) Intervalo de confianza para Edad, GPA y generoMujer
+  confint(modelo_genero, level=0.95)
+  
+  # 3) Prueba conjunta
+    
+    # 3.1) Prueba conjunta con modelos anidados
+    
+      modelo_genero_restringido <- lm(salario ~ Edad, data = datos)
+    
+      anova(modelo_genero_restringido, modelo_genero)
+    
+    # 3.2) Prueba conjunta con restricciones lineales
+      install.packages("car", dependencies = TRUE)
+      
+      library(car)
+    
+      linearHypothesis(modelo_genero, c("GPA = 0","generoMujer = 0"))
