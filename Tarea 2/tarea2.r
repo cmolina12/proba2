@@ -1,3 +1,4 @@
+library(knitr) # Tablas markdown
 
 # a) (0.3/5) Con los datos anexos, realice un modelo de regresión lineal y concluya sobre el efecto marginal de cada una de las variables (edad y GPA) mediante una prueba adecuada.
 
@@ -6,6 +7,7 @@
     datos <- read.table('salario.txt', header=TRUE)
     
     head(datos)
+    
   
   # 1) Ajustar modelo multiple
     modelo_multiple <- lm(salario ~ GPA + Edad, data = datos)
@@ -66,8 +68,33 @@
       anova(modelo_genero_restringido, modelo_genero)
     
     # 3.2) Prueba conjunta con restricciones lineales
-      install.packages("car", dependencies = TRUE)
       
       library(car)
     
       linearHypothesis(modelo_genero, c("GPA = 0","generoMujer = 0"))
+      
+# d) (0.3/5) Además del consultor político, otro experto cultural explica que el fenómeno en estos municipios es que a las mujeres no se les valora el esfuerzo académico, mientras que a los hombres si se les reconoce en términos de salario. Usando un modelo adecuado, prueba si la afirmación del experto es correcta o no.
+      
+  # Modelo con interaccion
+      
+      modelo_interaccion = lm(salario ~ Edad + GPA*genero, data = datos)
+      
+      summary(modelo_interaccion)
+      
+      # Prueba conjunta: (i) beta_GPA = 0 y (ii) beta_GPA + beta_GPA:generoMujer = 0
+      linearHypothesis(modelo_interaccion, c("GPA = 0", "GPA + GPA:generoMujer = 0"))
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
