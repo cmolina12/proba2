@@ -81,8 +81,23 @@ library(knitr) # Tablas markdown
         
         summary(modelo_interaccion)
         
-        # Prueba conjunta: (i) beta_GPA = 0 y (ii) beta_GPA + beta_GPA:generoMujer = 0
-        linearHypothesis(modelo_interaccion, c("GPA = 0", "GPA + GPA:generoMujer = 0"))
+        # Prueba para mujeres: beta_GPA + beta_GPA:generoMujer = 0
+        linearHypothesis(modelo_interaccion, c("GPA + GPA:generoMujer = 0"), test = "F")
+        
+        # Prueba para hombres: beta_GPA <= 0
+        
+        n = nobs(modelo_interaccion)
+        p = length(coef(modelo_interaccion)) 
+          
+        c = c(0,0,1,0,0)
+        
+        estimador <- t(c)%*%coef(modelo_interaccion)
+        varianza <- t(c)%*%vcov(modelo_interaccion)%*%c
+        t_critico <- qt(0.95, n-p) # Prueba de cola derecha
+        intervalo_1 <- estimador - t_critico * sqrt(varianza)
+        intervalo_2 <- estimador + t_critico * sqrt(varianza)
+        intervalo_1
+        intervalo_2
         
 # Problema 2
         
@@ -325,6 +340,11 @@ library(knitr) # Tablas markdown
         
         IC_1
         IC_2
+        
+        estadistico_prueba <- (estimador - 7.5)/sqrt(varianza)
+        
+        estadistico_prueba
+        t_critico
         
   # f) 
         c = c(
